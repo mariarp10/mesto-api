@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import Card from '../models/card';
+import { AuthRequest } from '../types';
 
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
+  const userId = (req as AuthRequest).user._id;
 
-  Card.create({ name, link, owner: req.user._id })
+  Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -41,7 +43,7 @@ export const deleteCard = (req: Request, res: Response) => {
 
 export const likeCard = (req: Request, res: Response) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const userId = (req as AuthRequest).user._id;
 
   Card.findByIdAndUpdate(
     cardId,
@@ -65,7 +67,7 @@ export const likeCard = (req: Request, res: Response) => {
 
 export const removeLike = (req: Request, res: Response) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const userId = (req as AuthRequest).user._id;
 
   Card.findByIdAndUpdate(
     cardId,

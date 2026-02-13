@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
+import { AuthRequest } from '../types';
 
 export const getUsers = (req: Request, res: Response) => {
   User.find({})
@@ -40,8 +41,9 @@ export const createUser = (req: Request, res: Response) => {
 
 export const updateUser = (req: Request, res: Response) => {
   const { name, about } = req.body;
+  const userId = (req as AuthRequest).user._id;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
@@ -58,8 +60,9 @@ export const updateUser = (req: Request, res: Response) => {
 
 export const updateAvatar = (req: Request, res: Response) => {
   const { avatar } = req.body;
+  const userId = (req as AuthRequest).user._id;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
